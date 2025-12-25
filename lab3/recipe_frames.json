@@ -1,0 +1,575 @@
+{
+  "name": "Фреймовая база знаний рецептов",
+  "description": "База знаний для подбора рецептов на основе теории фреймов Минского",
+  "frames": [
+    {
+      "name": "Блюдо",
+      "ako": null,
+      "slots": [
+        {
+          "name": "название",
+          "data_type": "TEXT",
+          "inheritance": "U"
+        },
+        {
+          "name": "кухня",
+          "data_type": "TEXT",
+          "inheritance": "O"
+        },
+        {
+          "name": "количество_порций",
+          "data_type": "INTEGER",
+          "inheritance": "O"
+        }
+      ]
+    },
+    {
+      "name": "Блюдо_низкого_бюджета",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "максимальная_стоимость",
+          "value": 800,
+          "data_type": "INTEGER",
+          "inheritance": "S"
+        },
+        {
+          "name": "категория_бюджета",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "triggers": {
+            "IF-NEEDED": "determine_budget_category"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Блюдо_среднего_бюджета",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "максимальная_стоимость",
+          "value": 2000,
+          "data_type": "INTEGER",
+          "inheritance": "S"
+        },
+        {
+          "name": "категория_бюджета",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "triggers": {
+            "IF-NEEDED": "determine_budget_category"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Блюдо_высокого_бюджета",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "максимальная_стоимость",
+          "value": 5000,
+          "data_type": "INTEGER",
+          "inheritance": "S"
+        },
+        {
+          "name": "категория_бюджета",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "triggers": {
+            "IF-NEEDED": "determine_budget_category"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Мясное_блюдо",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "тип_блюда",
+          "value": "мясное",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "основной_ингредиент",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "range": ["говядина", "свинина", "курица", "индейка"]
+        }
+      ]
+    },
+    {
+      "name": "Суп",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "тип_блюда",
+          "value": "суп",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "консистенция",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "range": ["прозрачный", "густой", "крем-суп"]
+        }
+      ]
+    },
+    {
+      "name": "Гарнир",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "тип_блюда",
+          "value": "гарнир",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "основа",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "range": ["крупа", "овощи", "макароны", "картофель"]
+        }
+      ]
+    },
+    {
+      "name": "Салат",
+      "ako": "Блюдо",
+      "slots": [
+        {
+          "name": "тип_блюда",
+          "value": "салат",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "заправка",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "range": ["майонез", "оливковое масло", "сметана", "йогурт"]
+        }
+      ]
+    },
+    {
+      "name": "Котлеты",
+      "ako": "Мясное_блюдо",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": false,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "низкая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "количество_ингредиентов",
+          "value": 5,
+          "data_type": "INTEGER",
+          "inheritance": "S"
+        },
+        {
+          "name": "причина_рекомендации",
+          "data_type": "TEXT",
+          "inheritance": "O",
+          "triggers": {
+            "IF-NEEDED": "get_recommendation_reason"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Гуляш",
+      "ako": "Мясное_блюдо",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "долго",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": false,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "средняя",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        },
+        {
+          "name": "количество_ингредиентов",
+          "value": 8,
+          "data_type": "INTEGER",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Стейк",
+      "ako": "Мясное_блюдо",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_высокого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": false,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "средняя",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Утка_по_пекински",
+      "ako": "Мясное_блюдо",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_высокого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "долго",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": false,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "высокая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Куриный_суп",
+      "ako": "Суп",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "низкая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Борщ",
+      "ako": "Суп",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "долго",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "средняя",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Том_ям",
+      "ako": "Суп",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_высокого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "среднее",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "высокая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Гречка",
+      "ako": "Гарнир",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "низкая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Рис_с_овощами",
+      "ako": "Гарнир",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_среднего_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "среднее",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "средняя",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Овощной_салат",
+      "ako": "Салат",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_низкого_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "низкая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Цезарь",
+      "ako": "Салат",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_среднего_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "среднее",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": false,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "средняя",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    },
+    {
+      "name": "Греческий_салат",
+      "ako": "Салат",
+      "slots": [
+        {
+          "name": "AKO",
+          "value": "!ref:Блюдо_среднего_бюджета",
+          "data_type": "FRAME",
+          "inheritance": "S"
+        },
+        {
+          "name": "время_приготовления",
+          "value": "быстро",
+          "data_type": "TEXT",
+          "inheritance": "S",
+          "triggers": {
+            "IF-ADDED": "validate_cooking_time"
+          }
+        },
+        {
+          "name": "диетические_ограничения",
+          "value": true,
+          "data_type": "BOOLEAN",
+          "inheritance": "S"
+        },
+        {
+          "name": "сложность",
+          "value": "низкая",
+          "data_type": "TEXT",
+          "inheritance": "S"
+        }
+      ]
+    }
+  ]
+}
